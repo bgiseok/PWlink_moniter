@@ -606,58 +606,58 @@ class LocalNaverAdMonitor {
 }
 
 // 사용 예시
-async function main() {
-  const args = process.argv.slice(2);
-  const command = args[0] || 'monitor';
-
-  // 기본 설정
-  const monitor = new LocalNaverAdMonitor({
-    keywords: [
-      '전화영어', '화상영어', '온라인영어', '영어회화', '토익스피킹',
-      '영어학원', '영어과외', '비즈니스영어', '토플스피킹', '오픽'
-    ],
-    intervalMinutes: 30,
-    maxRankings: 5,
-    headless: true,  // false로 하면 브라우저 창 보임
-    logFile: 'naver_rankings_local.json'
-  });
-
-  // 프로그램 종료 시 정리
-  process.on('SIGINT', async () => {
-    console.log('\n🛑 프로그램을 종료합니다...');
-    await monitor.stopMonitoring();
-    process.exit(0);
-  });
-
-  // 즉시 수집 (Enter 키)
-  process.stdin.on('data', async () => {
-    if (monitor.isRunning) {
-      console.log('\n⚡ 즉시 수집 실행...');
-      await monitor.collectAndSave();
-    }
-  });
-
-  switch (command) {
-    case 'once':
-      console.log('🔄 한 번만 수집 실행...');
-      await monitor.collectOnce();
-      break;
-    case 'stats':
-      await monitor.showStats();
-      break;
-    case 'csv':
-      await monitor.exportToCSV();
-      break;
-    default:
-      await monitor.startMonitoring();
-      break;
-  }
-}
-
+// async function main() {
+//   const args = process.argv.slice(2);
+//   const command = args[0] || 'monitor';
+//
+//   // 기본 설정
+//   const monitor = new LocalNaverAdMonitor({
+//     keywords: [
+//       '전화영어', '화상영어', '온라인영어', '영어회화', '토익스피킹',
+//       '영어학원', '영어과외', '비즈니스영어', '토플스피킹', '오픽'
+//     ],
+//     intervalMinutes: 30,
+//     maxRankings: 5,
+//     headless: true,  // false로 하면 브라우저 창 보임
+//     logFile: 'naver_rankings_local.json'
+//   });
+//
+//   // 프로그램 종료 시 정리
+//   process.on('SIGINT', async () => {
+//     console.log('\n�� 프로그램을 종료합니다...');
+//     await monitor.stopMonitoring();
+//     process.exit(0);
+//   });
+//
+//   // 즉시 수집 (Enter 키)
+//   process.stdin.on('data', async () => {
+//     if (monitor.isRunning) {
+//       console.log('\n⚡ 즉시 수집 실행...');
+//       await monitor.collectAndSave();
+//     }
+//   });
+//
+//   switch (command) {
+//     case 'once':
+//       console.log('🔄 한 번만 수집 실행...');
+//       await monitor.collectOnce();
+//       break;
+//     case 'stats':
+//       await monitor.showStats();
+//       break;
+//     case 'csv':
+//       await monitor.exportToCSV();
+//       break;
+//     default:
+//       await monitor.startMonitoring();
+//       break;
+//   }
+// }
+//
 // 실행
-if (require.main === module) {
-  main().catch(console.error);
-}
+// if (require.main === module) {
+//   main().catch(console.error);
+// }
 
 module.exports = LocalNaverAdMonitor;
 module.exports.globalProgress = globalProgress;
