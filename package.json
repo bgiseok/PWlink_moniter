@@ -4,11 +4,10 @@
   "description": "네이버 모바일 검색 파워링크 광고 순위 모니터링 도구",
   "main": "naver_ad_monitor.js",
   "scripts": {
-    "start": "node naver_ad_monitor.js",
+    "start": "node server.js",
     "once": "node naver_ad_monitor.js once",
     "stats": "node naver_ad_monitor.js stats",
-    "csv": "node naver_ad_monitor.js csv",
-    "start-server": "node server.js"
+    "csv": "node naver_ad_monitor.js csv"
   },
   "dependencies": {
     "express": "^4.18.2",
