@@ -3,6 +3,7 @@ const path = require('path');
 const LocalNaverAdMonitor = require('./naver_ad_monitor');
 const { globalProgress } = require('./naver_ad_monitor');
 const fs = require('fs');
+const cors = require('cors');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,6 +13,7 @@ app.use(express.json());
 // 프론트엔드 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'docs')));
+app.use(cors());
 
 // 광고 순위 병렬 수집 API
 app.post('/api/collect', async (req, res) => {
