@@ -41,7 +41,7 @@ app.get('/api/csv', (req, res) => {
   }
 });
 
-// 루트로 접속 시 docs/index.html 반환
+// 루트로 접속 시 임시 텍스트 반환
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
+  res.send('서버 정상 동작 중!');
 }); 
