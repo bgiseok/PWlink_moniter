@@ -11,6 +11,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 // 프론트엔드 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'docs')));
 
 // 광고 순위 병렬 수집 API
 app.post('/api/collect', async (req, res) => {
@@ -74,4 +75,9 @@ app.get('/api/csv', (req, res) => {
   } else {
     res.status(404).send('CSV 파일이 존재하지 않습니다.');
   }
+});
+
+// 루트로 접속 시 docs/index.html 반환
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'docs', 'index.html'));
 }); 
