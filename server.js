@@ -15,47 +15,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'docs')));
 app.use(cors());
 
-// 광고 순위 병렬 수집 API
+// 광고 순위 병렬 수집 API (임시: 바로 응답)
 app.post('/api/collect', async (req, res) => {
-  const keywords = req.body && Array.isArray(req.body.keywords) ? req.body.keywords : undefined;
-  const searchMode = req.body && req.body.searchMode ? req.body.searchMode : 'mobile'; // 기본값: 모바일
-  
-  try {
-    // 결과 배열 초기화
-    globalProgress.results = [];
-    globalProgress.running = true;
-    
-    if (searchMode === 'both') {
-      // 전체 모드: PC와 모바일 동시 수집
-      const pcMonitor = new LocalNaverAdMonitor({ headless: true, keywords, isMobile: false, mode: 'pc' });
-      const mobileMonitor = new LocalNaverAdMonitor({ headless: true, keywords, isMobile: true, mode: 'mobile' });
-      
-      await pcMonitor.initialize();
-      await mobileMonitor.initialize();
-      
-      // 병렬로 수집
-      await Promise.all([
-        pcMonitor.scrapeAllKeywordsParallel(3),
-        mobileMonitor.scrapeAllKeywordsParallel(3)
-      ]);
-      
-      await pcMonitor.cleanup();
-      await mobileMonitor.cleanup();
-    } else {
-      // 단일 모드
-      const isMobile = searchMode === 'mobile';
-      const monitor = new LocalNaverAdMonitor({ headless: true, keywords, isMobile });
-      await monitor.initialize();
-      await monitor.scrapeAllKeywordsParallel(5);
-      await monitor.cleanup();
-    }
-    
-    globalProgress.running = false;
-    res.json({ success: true });
-  } catch (error) {
-    globalProgress.running = false;
-    res.status(500).json({ success: false, error: error.message });
-  }
+  res.json({ success: true, message: "임시 응답: 크롤러 미실행" });
 });
 
 // 진행상황 반환 API
