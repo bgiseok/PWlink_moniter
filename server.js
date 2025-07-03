@@ -5,7 +5,7 @@ const { globalProgress } = require('./naver_ad_monitor');
 const fs = require('fs');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 // JSON 파싱 미들웨어 추가
 app.use(express.json());
