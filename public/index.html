@@ -26,14 +26,14 @@
     }
     .container {
       max-width: 1200px;
-      margin: 0 auto;
+      margin: 5rem auto;
       padding: 0 2rem;
     }
     .header-content {
       text-align: center;
     }
     h1 {
-      font-size: 3rem;
+      font-size: 2rem;
       font-weight: 700;
       color: #1a202c;
       margin-bottom: 1rem;
@@ -112,27 +112,6 @@
       cursor: not-allowed;
       transform: none;
     }
-    .loading {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      color: #3b82f6;
-      font-size: 1rem;
-      font-weight: 500;
-      margin: 1.5rem 0;
-    }
-    .loading::before {
-      content: '';
-      width: 20px;
-      height: 20px;
-      border: 2px solid #e5e7eb;
-      border-top: 2px solid #3b82f6;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
     .progress-section {
       margin: 1.5rem 0;
     }
@@ -198,7 +177,8 @@
     }
     .result-table {
       width: 100%;
-      border-collapse: collapse;
+      border-collapse: separate;
+      border-spacing: 0;
       margin-top: 1rem;
       background: #fff;
       border-radius: 12px;
@@ -207,19 +187,37 @@
     }
     .result-table th {
       background: #f8fafc;
-      padding: 1rem;
+      padding: 12px 8px;
       text-align: center;
       font-weight: 600;
       color: #374151;
-      border-bottom: 1px solid #e5e7eb;
+      border-bottom: 1px solid #f0f0f0;
     }
     .result-table td {
-      padding: 1rem;
+      padding: 12px 8px;
       text-align: center;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid #f0f0f0;
     }
     .result-table tr:last-child td {
       border-bottom: none;
+    }
+    .result-table tr {
+      min-height: 48px;
+      height: 48px;
+    }
+    .result-table td, .result-table th {
+      padding: 12px 8px;
+      vertical-align: middle;
+      text-align: center;
+    }
+    .result-table {
+      border-collapse: separate;
+      border-spacing: 0;
+      width: 100%;
+      table-layout: fixed;
+    }
+    .result-table th, .result-table td {
+      border-bottom: 1px solid #f0f0f0;
     }
     .rank {
       font-weight: 700;
@@ -280,90 +278,107 @@
         border-bottom-color: #3b82f6;
       }
     }
+    @keyframes blink {
+      0% { opacity: 1; }
+      50% { opacity: 0.2; }
+      100% { opacity: 1; }
+    }
+    #loading-text .dot {
+      animation: blink 1s infinite;
+    }
+    .main-layout {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .sidebar {
+      width: 380px;
+      min-width: 320px;
+      background: #f8fafc;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+      padding: 2.5rem 1.5rem 1.5rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .content-area {
+      flex: 1;
+      min-width: 0;
+    }
+    @media (max-width: 900px) {
+      .main-layout {
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .sidebar {
+        width: 100%;
+        min-width: 0;
+        margin-bottom: 1rem;
+      }
+    }
+    .page-title {
+      margin-top: 0;
+    }
   </style>
 </head>
 <body>
   <header class="header">
     <div class="container">
       <div class="header-content">
-        <h1>Powerlink Rank Monitor</h1>
-        <p class="subtitle">네이버 모바일 광고 순위를 실시간으로 확인하세요</p>
+        <h1>파워링크 순위 확인</h1>
+        <p class="subtitle">원하는 키워드를 입력하고 실행해주세요</p>
       </div>
     </div>
   </header>
   
-  <div class="container">
-    <div class="main-content">
+  <div class="main-layout">
+    <aside class="sidebar">
+      <h2 class="page-title">파워링크 순위 확인</h2>
+      <p class="page-desc">원하는 키워드를 입력하고 실행해주세요</p>
       <div class="form-section">
         <label class="form-label" for="keywords">
-          스크래핑할 키워드 목록
-          <span id="keyword-count" class="keyword-count">(15개)</span>
+          스크래핑할 키워드 목록 <span id="keyword-count" class="keyword-count">(4개)</span>
         </label>
-        <textarea id="keywords" class="textarea" rows="5" placeholder="한 줄에 하나씩 입력하세요...">영어회화
-온라인영어
-토익스피킹
+        <textarea id="keywords" class="textarea" rows="5" placeholder="한 줄에 하나씩 입력하세요...">전화영어
 화상영어
-전화영어
-영어학원
-영어과외
-비즈니스영어
-토플스피킹
-오픽
-영어공부
-무료영어
-영어앱
-영어말하기
-성인영어</textarea>
-        <div class="help-text">한 줄에 하나씩 입력하세요. (예: 영어회화, 토익스피킹)</div>
+영어회화
+민병철유폰</textarea>
+        <div class="help-text">한 줄에 하나씩 입력하세요.</div>
       </div>
-      
       <div class="form-section">
-        <label class="form-label">검색 모드 선택</label>
-        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="radio" name="searchMode" value="mobile" checked style="margin: 0;">
-            <span>모바일 검색</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="radio" name="searchMode" value="pc" style="margin: 0;">
-            <span>PC 검색</span>
-          </label>
-          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-            <input type="radio" name="searchMode" value="both" style="margin: 0;">
-            <span>전체 (PC + 모바일)</span>
-          </label>
-        </div>
+        <div class="form-label">검색 모드 선택</div>
+        <label><input type="radio" name="mode" value="mo" checked> 모바일 검색</label>
+        <label><input type="radio" name="mode" value="pc"> PC 검색</label>
+        <label><input type="radio" name="mode" value="both"> 전체 (PC + 모바일)</label>
         <div class="help-text">전체 모드는 PC와 모바일을 동시에 수집하여 비교할 수 있습니다.</div>
       </div>
-      
       <button id="collectBtn" class="btn-primary">광고 순위 수집</button>
-      
-      <div id="loading" class="loading" style="display:none;">수집 중입니다...</div>
-      
-      <div id="progressbar" class="progress-section" style="display:none;">
-        <div class="progress-bar">
-          <div id="bar" class="progress-fill"></div>
-        </div>
-        <div id="progressText" class="progress-text"></div>
+      <div id="loading-text" style="display:none; color:#3b82f6; font-weight:500; margin:0.5rem 0 1rem 0; font-size:1.1rem;">
+        수집 중입니다<span class="dot">...</span>
       </div>
-      
+    </aside>
+    <section class="content-area">
+      <div class="tab-btns" id="csv-btns" style="display:none;">
+        <button class="btn-secondary" id="csv-all">전체 CSV 다운로드</button>
+        <button class="btn-secondary" id="csv-mby">민병철유폰 CSV 다운로드</button>
+      </div>
       <div class="tabs">
         <button class="tab-btn active" id="tab-all">전체 순위</button>
         <button class="tab-btn" id="tab-mby">민병철유폰 순위</button>
       </div>
-      
-      <div id="csv-btns" class="csv-section" style="display:none;">
-        <button class="btn-secondary" id="csv-all">전체 CSV 다운로드</button>
-        <button class="btn-secondary" id="csv-mby">민병철유폰 CSV 다운로드</button>
+      <div id="result-section">
+        <div id="result-all"></div>
+        <div id="result-mby" style="display:none;"></div>
       </div>
-      
-      <div id="result-all"></div>
-      <div id="result-mby" style="display:none;"></div>
-    </div>
+    </section>
   </div>
   <script>
     const btn = document.getElementById('collectBtn');
-    const loading = document.getElementById('loading');
     const bar = document.getElementById('bar');
     const progressText = document.getElementById('progressText');
     const progressbar = document.getElementById('progressbar');
@@ -373,6 +388,7 @@
     const resultMby = document.getElementById('result-mby');
     const csvAll = document.getElementById('csv-all');
     const csvMby = document.getElementById('csv-mby');
+    const loadingText = document.getElementById('loading-text');
 
     let lastResults = [];
     let lastKeywords = [];
@@ -380,9 +396,8 @@
     btn.onclick = async () => {
       resultAll.innerHTML = '';
       resultMby.innerHTML = '';
-      loading.style.display = 'block';
+      loadingText.style.display = 'block';
       btn.disabled = true;
-      progressbar.style.display = 'block';
       // CSV 버튼 숨기기
       document.getElementById('csv-btns').style.display = 'none';
       // 입력된 키워드 추출
@@ -393,15 +408,13 @@
       lastKeywords = keywords.slice(); // 입력한 순서 저장
       
       // 검색 모드 확인
-      const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
+      const searchMode = document.querySelector('input[name="mode"]:checked').value;
       const isBothMode = searchMode === 'both';
-      const isMobile = searchMode === 'mobile';
+      const isMobile = searchMode === 'mo';
       
       if (keywords.length === 0) {
         resultAll.innerHTML = '<div style="color:red">키워드를 1개 이상 입력하세요.</div>';
-        loading.style.display = 'none';
         btn.disabled = false;
-        progressbar.style.display = 'none';
         return;
       }
       // collect API에 키워드와 모드 전달 (POST)
@@ -414,17 +427,14 @@
         const data = await res.json();
         if (!data.success) {
           resultAll.innerHTML = '<div style="color:red">수집 실패: ' + (data.error || '알 수 없는 오류') + '</div>';
-          loading.style.display = 'none';
           btn.disabled = false;
-          progressbar.style.display = 'none';
           return;
         }
         pollProgress();
       } catch (e) {
         resultAll.innerHTML = '<div style="color:red">API 호출 실패</div>';
-        loading.style.display = 'none';
         btn.disabled = false;
-        progressbar.style.display = 'none';
+        return;
       }
     };
 
@@ -440,9 +450,7 @@
           lastResults = progress.results;
           renderAllResults(progress.results);
           renderMbyResults(progress.results);
-          loading.style.display = 'none';
           btn.disabled = false;
-          progressbar.style.display = 'none';
           // CSV 버튼 보이기
           document.getElementById('csv-btns').style.display = 'block';
         }
@@ -456,7 +464,7 @@
       }
       
       // 전체 모드인지 확인 (PC와 모바일 결과가 모두 있는지 확인)
-      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mobile');
+      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mo');
       
       if (hasBothModes) {
         // 전체 모드: PC와 모바일 비교 테이블
@@ -507,7 +515,7 @@
       const keywordGroups = {};
       results.forEach(result => {
         if (!keywordGroups[result.keyword]) {
-          keywordGroups[result.keyword] = { pc: null, mobile: null };
+          keywordGroups[result.keyword] = { pc: null, mo: null };
         }
         keywordGroups[result.keyword][result.mode] = result;
       });
@@ -519,7 +527,7 @@
         if (!keywordGroups[keyword]) return;
         
         const pcResult = keywordGroups[keyword].pc;
-        const mobileResult = keywordGroups[keyword].mobile;
+        const mobileResult = keywordGroups[keyword].mo;
         
         // 기록시간 생성
         const now = new Date();
@@ -564,7 +572,7 @@
 
     function renderMbyResults(results) {
       // 전체 모드(PC+모바일) 결과가 모두 있을 때는 별도 함수로 렌더링
-      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mobile');
+      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mo');
       if (hasBothModes) {
         renderMbyBothModeResults(results);
         return;
@@ -617,7 +625,7 @@
       const keywordGroups = {};
       results.forEach(result => {
         if (!keywordGroups[result.keyword]) {
-          keywordGroups[result.keyword] = { pc: null, mobile: null };
+          keywordGroups[result.keyword] = { pc: null, mo: null };
         }
         keywordGroups[result.keyword][result.mode] = result;
       });
@@ -629,7 +637,7 @@
         if (!keywordGroups[keyword]) return;
         
         const pcResult = keywordGroups[keyword].pc;
-        const mobileResult = keywordGroups[keyword].mobile;
+        const mobileResult = keywordGroups[keyword].mo;
         
         // 민병철유폰 순위 찾기
         let pcMbyRank = null;
@@ -756,6 +764,17 @@
         alert('다운로드할 데이터가 없습니다. 먼저 광고 순위를 수집해주세요.');
       }
     };
+
+    function startCollect() {
+      // ...
+      loadingText.style.display = 'block';
+      btn.disabled = true;
+      // ...
+    }
+    function endCollect() {
+      loadingText.style.display = 'none';
+      btn.disabled = false;
+    }
   </script>
 </body>
 </html>
