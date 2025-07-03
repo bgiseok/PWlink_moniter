@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Powerlink Rank Monitor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8fafc;
+      color: #1a202c;
+      line-height: 1.6;
+    }
+    .header {
+      background: #fff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 2rem 0;
+      margin-bottom: 3rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .header-content {
+      text-align: center;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #1a202c;
+      margin-bottom: 1rem;
+      letter-spacing: -0.025em;
+    }
+    .subtitle {
+      font-size: 1.25rem;
+      color: #64748b;
+      font-weight: 400;
+      margin-bottom: 0;
+    }
+    .main-content {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      padding: 3rem;
+      margin-bottom: 3rem;
+    }
+    .form-section {
+      margin-bottom: 3rem;
+    }
+    .form-label {
+      display: block;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.75rem;
+    }
+    .keyword-count {
+      color: #6b7280;
+      font-size: 0.875rem;
+      font-weight: 400;
+      margin-left: 0.5rem;
+    }
+    .textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-family: inherit;
+      resize: vertical;
+      transition: border-color 0.2s ease;
+      background: #f9fafb;
+    }
+    .textarea:focus {
+      outline: none;
+      border-color: #3b82f6;
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .help-text {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 2rem;
+      font-size: 1.125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .loading {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #3b82f6;
+      font-size: 1rem;
+      font-weight: 500;
+      margin: 1.5rem 0;
+    }
+    .loading::before {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 2px solid #e5e7eb;
+      border-top: 2px solid #3b82f6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    .progress-section {
+      margin: 1.5rem 0;
+    }
+    .progress-bar {
+      background: #e5e7eb;
+      border-radius: 8px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+      height: 100%;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      margin-top: 0.5rem;
+      color: #6b7280;
+      font-size: 0.875rem;
+      text-align: right;
+    }
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid #e5e7eb;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 1rem 0;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      font-weight: 500;
+      color: #6b7280;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 2px solid transparent;
+    }
+    .tab-btn.active {
+      color: #3b82f6;
+      border-bottom-color: #3b82f6;
+    }
+    .csv-section {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #475569;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+    }
+    .result-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+    .result-table th {
+      background: #f8fafc;
+      padding: 1rem;
+      text-align: center;
+      font-weight: 600;
+      color: #374151;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .result-table td {
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .result-table tr:last-child td {
+      border-bottom: none;
+    }
+    .rank {
+      font-weight: 700;
+      color: #3b82f6;
+      font-size: 1.125rem;
+    }
+    .brand-empty {
+      color: #9ca3af;
+      font-style: italic;
+    }
+    .highlight-mby {
+      background: #fef3c7 !important;
+      color: #92400e !important;
+      font-weight: 600;
+    }
+    .keyword-section {
+      margin-bottom: 2rem;
+    }
+    .keyword-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 3rem 2rem;
+      color: #6b7280;
+    }
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+    @media (max-width: 768px) {
+      .container {
+        padding: 0 1rem;
+      }
+      h1 {
+        font-size: 2rem;
+      }
+      .main-content {
+        padding: 2rem 1.5rem;
+      }
+      .csv-section {
+        flex-direction: column;
+      }
+      .tabs {
+        flex-direction: column;
+      }
+      .tab-btn {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+      }
+      .tab-btn.active {
+        border-bottom-color: #3b82f6;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <div class="header-content">
+        <h1>Powerlink Rank Monitor</h1>
+        <p class="subtitle">네이버 모바일 광고 순위를 실시간으로 확인하세요</p>
+      </div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <div class="main-content">
+      <div class="form-section">
+        <label class="form-label" for="keywords">
+          스크래핑할 키워드 목록
+          <span id="keyword-count" class="keyword-count">(15개)</span>
+        </label>
+        <textarea id="keywords" class="textarea" rows="5" placeholder="한 줄에 하나씩 입력하세요...">영어회화
+온라인영어
+토익스피킹
+화상영어
+전화영어
+영어학원
+영어과외
+비즈니스영어
+토플스피킹
+오픽
+영어공부
+무료영어
+영어앱
+영어말하기
+성인영어</textarea>
+        <div class="help-text">한 줄에 하나씩 입력하세요. (예: 영어회화, 토익스피킹)</div>
+      </div>
+      
+      <div class="form-section">
+        <label class="form-label">검색 모드 선택</label>
+        <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="searchMode" value="mobile" checked style="margin: 0;">
+            <span>모바일 검색</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="searchMode" value="pc" style="margin: 0;">
+            <span>PC 검색</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+            <input type="radio" name="searchMode" value="both" style="margin: 0;">
+            <span>전체 (PC + 모바일)</span>
+          </label>
+        </div>
+        <div class="help-text">전체 모드는 PC와 모바일을 동시에 수집하여 비교할 수 있습니다.</div>
+      </div>
+      
+      <button id="collectBtn" class="btn-primary">광고 순위 수집</button>
+      
+      <div id="loading" class="loading" style="display:none;">수집 중입니다...</div>
+      
+      <div id="progressbar" class="progress-section" style="display:none;">
+        <div class="progress-bar">
+          <div id="bar" class="progress-fill"></div>
+        </div>
+        <div id="progressText" class="progress-text"></div>
+      </div>
+      
+      <div class="tabs">
+        <button class="tab-btn active" id="tab-all">전체 순위</button>
+        <button class="tab-btn" id="tab-mby">민병철유폰 순위</button>
+      </div>
+      
+      <div id="csv-btns" class="csv-section" style="display:none;">
+        <button class="btn-secondary" id="csv-all">전체 CSV 다운로드</button>
+        <button class="btn-secondary" id="csv-mby">민병철유폰 CSV 다운로드</button>
+      </div>
+      
+      <div id="result-all"></div>
+      <div id="result-mby" style="display:none;"></div>
+    </div>
+  </div>
+  <script>
+    const btn = document.getElementById('collectBtn');
+    const loading = document.getElementById('loading');
+    const bar = document.getElementById('bar');
+    const progressText = document.getElementById('progressText');
+    const progressbar = document.getElementById('progressbar');
+    const tabAll = document.getElementById('tab-all');
+    const tabMby = document.getElementById('tab-mby');
+    const resultAll = document.getElementById('result-all');
+    const resultMby = document.getElementById('result-mby');
+    const csvAll = document.getElementById('csv-all');
+    const csvMby = document.getElementById('csv-mby');
+
+    let lastResults = [];
+    let lastKeywords = [];
+
+    btn.onclick = async () => {
+      resultAll.innerHTML = '';
+      resultMby.innerHTML = '';
+      loading.style.display = 'block';
+      btn.disabled = true;
+      progressbar.style.display = 'block';
+      // CSV 버튼 숨기기
+      document.getElementById('csv-btns').style.display = 'none';
+      // 입력된 키워드 추출
+      const keywords = document.getElementById('keywords').value
+        .split(/\n|,/)
+        .map(k => k.trim())
+        .filter(k => k.length > 0);
+      lastKeywords = keywords.slice(); // 입력한 순서 저장
+      
+      // 검색 모드 확인
+      const searchMode = document.querySelector('input[name="searchMode"]:checked').value;
+      const isBothMode = searchMode === 'both';
+      const isMobile = searchMode === 'mobile';
+      
+      if (keywords.length === 0) {
+        resultAll.innerHTML = '<div style="color:red">키워드를 1개 이상 입력하세요.</div>';
+        loading.style.display = 'none';
+        btn.disabled = false;
+        progressbar.style.display = 'none';
+        return;
+      }
+      // collect API에 키워드와 모드 전달 (POST)
+      try {
+        const res = await fetch('/api/collect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ keywords, searchMode })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          resultAll.innerHTML = '<div style="color:red">수집 실패: ' + (data.error || '알 수 없는 오류') + '</div>';
+          loading.style.display = 'none';
+          btn.disabled = false;
+          progressbar.style.display = 'none';
+          return;
+        }
+        pollProgress();
+      } catch (e) {
+        resultAll.innerHTML = '<div style="color:red">API 호출 실패</div>';
+        loading.style.display = 'none';
+        btn.disabled = false;
+        progressbar.style.display = 'none';
+      }
+    };
+
+    let pollTimer = null;
+    function pollProgress() {
+      clearTimeout(pollTimer);
+      fetch('/api/progress').then(r=>r.json()).then(progress => {
+        // running이 true면 계속 폴링
+        if(progress.running) {
+          pollTimer = setTimeout(pollProgress, 500);
+        } else {
+          // 완료 시 결과 표시
+          lastResults = progress.results;
+          renderAllResults(progress.results);
+          renderMbyResults(progress.results);
+          loading.style.display = 'none';
+          btn.disabled = false;
+          progressbar.style.display = 'none';
+          // CSV 버튼 보이기
+          document.getElementById('csv-btns').style.display = 'block';
+        }
+      });
+    }
+
+    function renderAllResults(results) {
+      if (!results || !Array.isArray(results) || results.length === 0) {
+        resultAll.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📊</div><div>결과가 없습니다.</div></div>';
+        return;
+      }
+      
+      // 전체 모드인지 확인 (PC와 모바일 결과가 모두 있는지 확인)
+      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mobile');
+      
+      if (hasBothModes) {
+        // 전체 모드: PC와 모바일 비교 테이블
+        renderBothModeResults(results);
+      } else {
+        // 단일 모드: 기존 방식
+        renderSingleModeResults(results);
+      }
+    }
+    
+    function renderSingleModeResults(results) {
+      let html = '';
+      // 입력한 키워드 순서대로 정렬
+      const sorted = lastKeywords.length > 0
+        ? lastKeywords.map(k => results.find(r => r.keyword === k)).filter(Boolean)
+        : results;
+      sorted.forEach(keywordResult => {
+        // 기록시간 생성 (YYYY-MM-DD HH:mm)
+        const now = new Date();
+        const pad = n => n < 10 ? '0' + n : n;
+        const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        html += `<div class="keyword-section">`;
+        html += `<h3 class="keyword-title">${keywordResult.keyword}</h3>`;
+        html += '<table class="result-table">';
+        html += '<thead><tr><th>기록시간</th><th>순위</th><th>브랜드</th></tr></thead>';
+        html += '<tbody>';
+        if(keywordResult.rankings && keywordResult.rankings.length > 0) {
+          keywordResult.rankings.forEach(ranking => {
+            const highlight = ranking.brandName === '민병철유폰' ? 'highlight-mby' : '';
+            html += `<tr class="${highlight}">`;
+            html += `<td>${timeStr}</td>`;
+            html += `<td class="rank">${ranking.rank}</td>`;
+            html += `<td>${ranking.brandName ? ranking.brandName : '<span class="brand-empty">(없음)</span>'}</td>`;
+            html += `</tr>`;
+          });
+        } else {
+          html += '<tr><td colspan="3" class="empty-state">광고 없음</td></tr>';
+        }
+        html += '</tbody></table>';
+        html += `</div>`;
+      });
+      resultAll.innerHTML = html;
+    }
+    
+    function renderBothModeResults(results) {
+      let html = '';
+      // 키워드별로 그룹화
+      const keywordGroups = {};
+      results.forEach(result => {
+        if (!keywordGroups[result.keyword]) {
+          keywordGroups[result.keyword] = { pc: null, mobile: null };
+        }
+        keywordGroups[result.keyword][result.mode] = result;
+      });
+      
+      // 입력한 키워드 순서대로 정렬
+      const sortedKeywords = lastKeywords.length > 0 ? lastKeywords : Object.keys(keywordGroups);
+      
+      sortedKeywords.forEach(keyword => {
+        if (!keywordGroups[keyword]) return;
+        
+        const pcResult = keywordGroups[keyword].pc;
+        const mobileResult = keywordGroups[keyword].mobile;
+        
+        // 기록시간 생성
+        const now = new Date();
+        const pad = n => n < 10 ? '0' + n : n;
+        const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        
+        html += `<div class="keyword-section">`;
+        html += `<h3 class="keyword-title">${keyword}</h3>`;
+        html += '<table class="result-table">';
+        html += '<thead><tr><th>검색시간</th><th>순위</th><th>PC</th><th>MO</th></tr></thead>';
+        html += '<tbody>';
+        
+        // 최대 5개 순위까지 비교
+        const maxRanks = Math.max(
+          pcResult && pcResult.rankings ? pcResult.rankings.length : 0,
+          mobileResult && mobileResult.rankings ? mobileResult.rankings.length : 0,
+          5
+        );
+        
+        for (let i = 0; i < maxRanks; i++) {
+          const rank = i + 1;
+          const pcBrand = pcResult && pcResult.rankings && pcResult.rankings[i] ? pcResult.rankings[i].brandName : '';
+          const mobileBrand = mobileResult && mobileResult.rankings && mobileResult.rankings[i] ? mobileResult.rankings[i].brandName : '';
+          
+          // 민병철유폰 하이라이트
+          const highlight = (pcBrand === '민병철유폰' || mobileBrand === '민병철유폰') ? 'highlight-mby' : '';
+          
+          html += `<tr class="${highlight}">`;
+          html += `<td>${timeStr}</td>`;
+          html += `<td class="rank">${rank}</td>`;
+          html += `<td>${pcBrand || '<span class="brand-empty">(없음)</span>'}</td>`;
+          html += `<td>${mobileBrand || '<span class="brand-empty">(없음)</span>'}</td>`;
+          html += `</tr>`;
+        }
+        
+        html += '</tbody></table>';
+        html += `</div>`;
+      });
+      
+      resultAll.innerHTML = html;
+    }
+
+    function renderMbyResults(results) {
+      // 전체 모드(PC+모바일) 결과가 모두 있을 때는 별도 함수로 렌더링
+      const hasBothModes = results.some(r => r.mode === 'pc') && results.some(r => r.mode === 'mobile');
+      if (hasBothModes) {
+        renderMbyBothModeResults(results);
+        return;
+      }
+      if (!results || results.length === 0) {
+        resultMby.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🔍</div><div>결과가 없습니다.</div></div>';
+        return;
+      }
+      let html = '';
+      let hasResults = false;
+      // 입력한 키워드 순서대로 정렬
+      const sorted = lastKeywords.length > 0
+        ? lastKeywords.map(k => results.find(r => r.keyword === k)).filter(Boolean)
+        : results;
+      sorted.forEach(keywordResult => {
+        // 기록시간 생성 (YYYY-MM-DD HH:mm)
+        const now = new Date();
+        const pad = n => n < 10 ? '0' + n : n;
+        const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+        keywordResult.rankings.forEach(ranking => {
+          if(ranking.brandName === '민병철유폰') {
+            hasResults = true;
+            html += `<div class="keyword-section">`;
+            html += `<h3 class="keyword-title">${keywordResult.keyword}</h3>`;
+            html += '<table class="result-table">';
+            html += '<thead><tr><th>기록시간</th><th>순위</th><th>브랜드</th></tr></thead>';
+            html += '<tbody>';
+            html += `<tr class="highlight-mby">`;
+            html += `<td>${timeStr}</td>`;
+            html += `<td class="rank">${ranking.rank}</td>`;
+            html += `<td>${ranking.brandName}</td>`;
+            html += `</tr>`;
+            html += '</tbody></table>';
+            html += `</div>`;
+          }
+        });
+      });
+      if(!hasResults) {
+        html = '<div class="empty-state"><div class="empty-state-icon">📭</div><div>민병철유폰 브랜드가 노출된 키워드가 없습니다.</div></div>';
+      }
+      resultMby.innerHTML = html;
+    }
+
+    // 민병철유폰 전체 모드 결과 렌더링
+    function renderMbyBothModeResults(results) {
+      let html = '';
+      let hasResults = false;
+      
+      // 키워드별로 그룹화
+      const keywordGroups = {};
+      results.forEach(result => {
+        if (!keywordGroups[result.keyword]) {
+          keywordGroups[result.keyword] = { pc: null, mobile: null };
+        }
+        keywordGroups[result.keyword][result.mode] = result;
+      });
+      
+      // 입력한 키워드 순서대로 정렬
+      const sortedKeywords = lastKeywords.length > 0 ? lastKeywords : Object.keys(keywordGroups);
+      
+      sortedKeywords.forEach(keyword => {
+        if (!keywordGroups[keyword]) return;
+        
+        const pcResult = keywordGroups[keyword].pc;
+        const mobileResult = keywordGroups[keyword].mobile;
+        
+        // 민병철유폰 순위 찾기
+        let pcMbyRank = null;
+        let mobileMbyRank = null;
+        
+        if (pcResult && pcResult.rankings) {
+          const pcMby = pcResult.rankings.find(r => r.brandName === '민병철유폰');
+          if (pcMby) pcMbyRank = pcMby.rank;
+        }
+        
+        if (mobileResult && mobileResult.rankings) {
+          const mobileMby = mobileResult.rankings.find(r => r.brandName === '민병철유폰');
+          if (mobileMby) mobileMbyRank = mobileMby.rank;
+        }
+        
+        // 민병철유폰이 PC나 모바일 중 하나라도 있으면 표시
+        if (pcMbyRank || mobileMbyRank) {
+          hasResults = true;
+          
+          // 기록시간 생성
+          const now = new Date();
+          const pad = n => n < 10 ? '0' + n : n;
+          const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+          
+          html += `<div class="keyword-section">`;
+          html += `<h3 class="keyword-title">${keyword}</h3>`;
+          html += '<table class="result-table">';
+          html += '<thead><tr><th>검색시간</th><th>PC 순위</th><th>MO 순위</th><th>브랜드</th></tr></thead>';
+          html += '<tbody>';
+          html += `<tr class="highlight-mby">`;
+          html += `<td>${timeStr}</td>`;
+          html += `<td class="rank">${pcMbyRank || '<span class="brand-empty">(없음)</span>'}</td>`;
+          html += `<td class="rank">${mobileMbyRank || '<span class="brand-empty">(없음)</span>'}</td>`;
+          html += `<td>민병철유폰</td>`;
+          html += `</tr>`;
+          html += '</tbody></table>';
+          html += `</div>`;
+        }
+      });
+      
+      if(!hasResults) {
+        html = '<div class="empty-state"><div class="empty-state-icon">📳</div><div>민병철유폰 브랜드가 노출된 키워드가 없습니다.</div></div>';
+      }
+      
+      resultMby.innerHTML = html;
+    }
+
+    function showCsvBtn(tab) {
+      const csvBtns = document.getElementById('csv-btns');
+      if (csvBtns.style.display === 'none') return; // CSV 버튼이 숨겨져 있으면 아무것도 안함
+      if (tab === 'all') {
+        csvAll.style.display = '';
+        csvMby.style.display = 'none';
+      } else {
+        csvAll.style.display = 'none';
+        csvMby.style.display = '';
+      }
+    }
+    tabAll.onclick = () => {
+      tabAll.classList.add('active');
+      tabMby.classList.remove('active');
+      resultAll.style.display = '';
+      resultMby.style.display = 'none';
+      showCsvBtn('all');
+    };
+    tabMby.onclick = () => {
+      tabMby.classList.add('active');
+      tabAll.classList.remove('active');
+      resultAll.style.display = 'none';
+      resultMby.style.display = '';
+      showCsvBtn('mby');
+    };
+
+    function downloadCSV(results, onlyMby) {
+      // 기록시간 생성 (YYYY-MM-DD HH:mm)
+      const now = new Date();
+      const pad = n => n < 10 ? '0' + n : n;
+      const timeStr = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+      let csv = '기록시간,키워드,순위,브랜드\n';
+      results.forEach(keywordResult => {
+        keywordResult.rankings.forEach(ranking => {
+          if(!onlyMby || ranking.brandName === '민병철유폰') {
+            csv += `"${timeStr}","${keywordResult.keyword}",${ranking.rank},"${ranking.brandName}"\n`;
+          }
+        });
+      });
+      // BOM 추가로 한글 깨짐 방지
+      const blob = new Blob(["\uFEFF" + csv], {type: 'text/csv'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = onlyMby ? '민병철유폰_키워드순위.csv' : '전체_키워드순위.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // textarea 키워드 개수 실시간 표시
+    const keywordsInput = document.getElementById('keywords');
+    const keywordCount = document.getElementById('keyword-count');
+    function updateKeywordCount() {
+      const count = keywordsInput.value
+        .split(/\n|,/) // 줄바꿈 또는 쉼표로 분리
+        .map(k => k.trim())
+        .filter(k => k.length > 0).length;
+      keywordCount.textContent = `(${count}개)`;
+    }
+    keywordsInput.addEventListener('input', updateKeywordCount);
+    // 페이지 로드시 초기 카운트
+    updateKeywordCount();
+    // CSV 다운로드 버튼 이벤트 리스너 추가
+    csvAll.onclick = () => {
+      if(lastResults && lastResults.length > 0) {
+        downloadCSV(lastResults, false);
+      } else {
+        alert('다운로드할 데이터가 없습니다. 먼저 광고 순위를 수집해주세요.');
+      }
+    };
+    csvMby.onclick = () => {
+      if(lastResults && lastResults.length > 0) {
+        downloadCSV(lastResults, true);
+      } else {
+        alert('다운로드할 데이터가 없습니다. 먼저 광고 순위를 수집해주세요.');
+      }
+    };
+  </script>
+</body>
+</html>
