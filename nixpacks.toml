@@ -1,0 +1,28 @@
+[phases.setup]
+nixPkgs = [
+  "chromium",
+  "alsa-lib",
+  "at-spi2-atk",
+  "atk",
+  "cairo",
+  "cups",
+  "dbus",
+  "expat",
+  "fontconfig",
+  "freetype",
+  "gdk-pixbuf",
+  "glib",
+  "graphite2",
+  "gtk3",
+  "harfbuzz",
+  "libdatrie",
+  "libepoxy",
+  "libgcrypt",
+  "libthai",
+  "libxkbcommon",
+  "nspr",
+  "nss",
+  "pango",
+  "pipewire",
+  "systemd"
+] 
