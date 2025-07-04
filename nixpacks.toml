@@ -1,5 +1,6 @@
 [phases.setup]
 nixPkgs = [
+  "nodejs",
   "chromium",
   "alsa-lib",
   "at-spi2-atk",
